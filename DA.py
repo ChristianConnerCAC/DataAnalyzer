@@ -94,6 +94,12 @@ leftBox.grid(row = 0, column = 0, sticky="nsew")
 midBox = kin.Frame(descBoxes, height = 225, borderwidth = 1, relief = "solid")
 midBox.grid(row = 0, column = 1, sticky="nsew")
 
+# Local File Library
+# This button when pressed should access your file library,
+# Currently just here to be set-up for CSV.
+libraryButton = kin.Button(midBox, text="File Library", font= ("Courier New", 12, "bold"), width=20, height = 3, )
+libraryButton.pack(pady=(10, 10))
+
 # repeated for right box.
 rightBox = kin.Frame(descBoxes, height = 225, borderwidth = 1, relief = "solid")
 rightBox.grid(row = 0, column = 2, sticky="nsew")
