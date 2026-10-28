@@ -1,7 +1,14 @@
 import tkinter as kin
 from tkinter import filedialog as fd
+import csv
 
-# filedialog will be used later for CSV.
+# Allows access to the file library
+# CSV files can be selected.
+# Connected to libraryButton in midBox.
+def csvFile():
+    a = fd.askopenfilename(
+        title="Find CSV File",
+        filetypes=[("CSV", "*.csv")])
 
 # kin.Tk allows creates the main window.
 # .title sets the name in the bar.
@@ -96,8 +103,8 @@ midBox.grid(row = 0, column = 1, sticky="nsew")
 
 # Local File Library
 # This button when pressed should access your file library,
-# Currently just here to be set-up for CSV.
-libraryButton = kin.Button(midBox, text="File Library", font= ("Courier New", 12, "bold"), width=20, height = 3, )
+# using the def csvFile
+libraryButton = kin.Button(midBox, text="File Library", font= ("Courier New", 12, "bold"), width=20, height = 3, command=csvFile)
 libraryButton.pack(pady=(10, 10))
 
 # repeated for right box.
