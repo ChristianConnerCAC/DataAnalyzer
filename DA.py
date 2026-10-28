@@ -52,6 +52,14 @@ rightBrkt.pack(side="right")
 multipleTabs = kin.Frame(mainDisplay)
 multipleTabs.pack(fill="both", expand=True, padx=25, pady=(220,10))
 
+# Creates titles above the squared sections
+# Uses a fixed x and y position for the first title
+# then uses relative x to space out the other titles.
+kin.Label(multipleTabs, text = "Create Table", font=("Courier New", 15, "bold")).place(x=105, y=5)
+kin.Label(multipleTabs, text = "Load CSV", font=("Courier New", 15, "bold")).place(relx= 1/3, x=105, y=5)
+kin.Label(multipleTabs, text = "Load Template", font=("Courier New", 15, "bold")).place(relx= 2/3, x=105, y=5)
+
+
 # Now we add a frame inside multipleTabs that holds
 # three independent boxes.
 # x represents being placed on the left side edge.
