@@ -3,6 +3,9 @@ from tkinter import filedialog as fd
 import csv
 import TV
 
+limiterRows = 10
+limiterColumns = 10
+
 # Allows access to the file library
 # CSV files can be selected.
 # Connected to libraryButton in midBox.
@@ -14,7 +17,7 @@ def csvFile():
         with open(selectedFile, "r", newline="") as file:
             readCSV = csv.reader(file)
             tableStored = list(readCSV)
-        TV.tableView(tableStored)
+        TV.tableView(tableStored, limiterRows, limiterColumns)
 
 
 # kin.Tk allows creates the main window.
