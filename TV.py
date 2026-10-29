@@ -23,7 +23,7 @@ def tableView(tableStored):
 
     # Sets counter
     setCounter = kin.Label(tableWhole, text="Set 1 of 1")
-    setCounter.pack(anchor="e")
+    setCounter.pack(anchor="w")
 
     # This sees if we have the CSV data.
     # Grabs data for rows and columns.
