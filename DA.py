@@ -1,14 +1,21 @@
 import tkinter as kin
 from tkinter import filedialog as fd
 import csv
+import TV
 
 # Allows access to the file library
 # CSV files can be selected.
 # Connected to libraryButton in midBox.
 def csvFile():
-    a = fd.askopenfilename(
+    selectedFile = fd.askopenfilename(
         title="Find CSV File",
         filetypes=[("CSV", "*.csv")])
+    if selectedFile:
+        with open(selectedFile, "r", newline="") as file:
+            readCSV = csv.reader(file)
+            tableStored = list(readCSV)
+        TV.tableView(tableStored)
+
 
 # kin.Tk allows creates the main window.
 # .title sets the name in the bar.
