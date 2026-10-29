@@ -9,9 +9,21 @@ def tableView(tableStored):
     tableDisplay.title("Table View")
     tableDisplay.geometry("1000x600")
 
+
+    tableWhole = kin.Frame(tableDisplay)
+    tableWhole.pack(anchor="w", pady=(120))
+    
     # Treeview table display and fills the window
-    tableColrow = t.Treeview(tableDisplay, show="headings")
-    tableColrow.pack(expand=True)
+    tableColrow = t.Treeview(tableWhole, show="headings")
+    tableColrow.pack(anchor="w")
+
+    # Page number counter
+    pageCounter = kin.Label(tableWhole, text="Page 1 of 1")
+    pageCounter.pack(anchor="e")
+
+    # Sets counter
+    setCounter = kin.Label(tableWhole, text="Set 1 of 1")
+    setCounter.pack(anchor="e")
 
     # This sees if we have the CSV data.
     # Grabs data for rows and columns.
