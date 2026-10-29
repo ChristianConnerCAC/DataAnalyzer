@@ -10,22 +10,21 @@ def tableView(tableStored, limiterRows, limiterColumns):
     tableDisplay.title("Table View")
     tableDisplay.geometry("1000x600")
 
+    # Creates another window to fix an issue I couldn't solve.
     csvDisplay = kin.Toplevel(tableDisplay)
     csvDisplay.title("CSV Table")
     csvDisplay.geometry("600x400")
 
-    # Holds the table as its on section.
+    # Holds the table in its own section.
     tableWhole = kin.Frame(csvDisplay)
     tableWhole.pack(anchor="w", pady=(50, 0))
 
-    tableSection = kin.Frame(tableWhole)
-    tableSection.pack(side="left", anchor="nw")
-
+    # Holds Buttons as their own section.
     buttonHold = kin.Frame(tableDisplay)
     buttonHold.pack(side="left", anchor="n", padx=10)
 
     #Treeview table display and fills the window.
-    tableColrow = t.Treeview(tableSection, show="headings", height=10)
+    tableColrow = t.Treeview(tableWhole, show="headings", height=10)
     tableColrow.pack(anchor="nw")
 
     # This sees if we have the CSV data.
@@ -43,6 +42,7 @@ def tableView(tableStored, limiterRows, limiterColumns):
     maxRows = len(rowStarters)
     maxColumns = len(colHeaders)
 
+    # Uses .ceil to make sure they are whole
     maxPages = m.ceil(maxRows / limiterRows)
     maxSets = m.ceil(maxColumns / limiterColumns)
 
@@ -54,13 +54,28 @@ def tableView(tableStored, limiterRows, limiterColumns):
     setCounter = kin.Label(buttonHold, text=f"Set 1 of {maxSets}")
     setCounter.pack()
 
+    # Sets the positions for start and end of columns.
     firColumn = 0
     endColumn = limiterColumns
 
+    # Tracks the counts for columns and rows.
     firSet = 0
     firPage = 0
 
-    def clicks(selected):
+    # Both use non local since they will be using variables
+    # outside their definitions.
+    # made a few adjustments.
+    def pageClicks(selected):
+        nonlocal firPage
+        firPage = firPage + selected
+        firPage = max(0, min(firPage, maxPages - 1))
+
+        pageCounter.config(text=f"Page {firPage + 1} of {maxPages}")
+
+        refreshContents()
+
+    # Displays correct clicks on buttons
+    def setClicks(selected):
         nonlocal firSet, firColumn, endColumn
         firSet = firSet + selected
         firSet = max(0, min(firSet, maxSets - 1))
@@ -71,15 +86,25 @@ def tableView(tableStored, limiterRows, limiterColumns):
 
         refreshContents()
 
-    setLeft = kin.Button(buttonHold, text="<", command=lambda: clicks(-1))
+    # Left and Right buttons for Sets to click over.
+    setLeft = kin.Button(buttonHold, text="<", command=lambda: setClicks(-1))
     setLeft.pack(side="left")
 
         
-    setRight = kin.Button(buttonHold, text=">", command=lambda: clicks(1))
+    setRight = kin.Button(buttonHold, text=">", command=lambda: setClicks(1))
     setRight.pack(side="left")
 
+    # Copy pasted sets for pages.
+    pageLeft = kin.Button(buttonHold, text="<", command=lambda: pageClicks(-1))
+    pageLeft.pack(side="left")
+
+        
+    pageRight = kin.Button(buttonHold, text=">", command=lambda: pageClicks(1))
+    pageRight.pack(side="left")
 
 
+
+    # Refreshes the contents for sets
     def refreshContents():
         displayHeaders = colHeaders[firColumn:endColumn]
 
@@ -103,8 +128,8 @@ def tableView(tableStored, limiterRows, limiterColumns):
         for displayed in tableColrow.get_children():
             tableColrow.delete(displayed)
 
-        startRow = 0
-        endRow = limiterRows
+        startRow = firPage * limiterRows
+        endRow = startRow + limiterRows
 
         # Adds the rows to the table.
         for dataRows in rowStarters[startRow:endRow]:
