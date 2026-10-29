@@ -19,13 +19,28 @@ def tableView(tableStored, limiterRows, limiterColumns):
     tableWhole = kin.Frame(csvDisplay)
     tableWhole.pack(anchor="w", pady=(50, 0))
 
-    # Holds Buttons as their own section.
-    buttonHold = kin.Frame(tableDisplay)
-    buttonHold.pack(side="left", anchor="n", padx=10)
 
     #Treeview table display and fills the window.
     tableColrow = t.Treeview(tableWhole, show="headings", height=10)
     tableColrow.pack(anchor="nw")
+
+    # This holds buttons for the command screen
+    infoSection = kin.Frame(tableDisplay)
+    infoSection.pack(anchor="w", padx=6, pady=6)
+
+    # Command Box to type in for commands
+    infoBox = kin.Text(infoSection, bg="white", height=10, width=50)
+    infoBox.pack()
+
+    # Holds Buttons as their own section.
+    buttonHold = kin.Frame(infoSection)
+    buttonHold.pack(side="left", anchor="n", pady=10)
+
+    setHold = kin.Frame(buttonHold)
+    setHold.pack(side="left", padx=5)
+
+    pageHold = kin.Frame(buttonHold)
+    pageHold.pack(side="left", padx=5)
 
     # This sees if we have the CSV data.
     # Grabs data for rows and columns.
@@ -47,11 +62,11 @@ def tableView(tableStored, limiterRows, limiterColumns):
     maxSets = m.ceil(maxColumns / limiterColumns)
 
     # Page number counter.
-    pageCounter = kin.Label(buttonHold, text=f"Page 1 of {maxPages}")
+    pageCounter = kin.Label(pageHold, text=f"Page 1 of {maxPages}")
     pageCounter.pack()
 
     # Sets counter.
-    setCounter = kin.Label(buttonHold, text=f"Set 1 of {maxSets}")
+    setCounter = kin.Label(setHold, text=f"Set 1 of {maxSets}")
     setCounter.pack()
 
     # Sets the positions for start and end of columns.
@@ -87,19 +102,19 @@ def tableView(tableStored, limiterRows, limiterColumns):
         refreshContents()
 
     # Left and Right buttons for Sets to click over.
-    setLeft = kin.Button(buttonHold, text="<", command=lambda: setClicks(-1))
+    setLeft = kin.Button(setHold, text="<", command=lambda: setClicks(-1))
     setLeft.pack(side="left")
 
         
-    setRight = kin.Button(buttonHold, text=">", command=lambda: setClicks(1))
+    setRight = kin.Button(setHold, text=">", command=lambda: setClicks(1))
     setRight.pack(side="left")
 
     # Copy pasted sets for pages.
-    pageLeft = kin.Button(buttonHold, text="<", command=lambda: pageClicks(-1))
+    pageLeft = kin.Button(pageHold, text="<", command=lambda: pageClicks(-1))
     pageLeft.pack(side="left")
 
         
-    pageRight = kin.Button(buttonHold, text=">", command=lambda: pageClicks(1))
+    pageRight = kin.Button(pageHold, text=">", command=lambda: pageClicks(1))
     pageRight.pack(side="left")
 
 
