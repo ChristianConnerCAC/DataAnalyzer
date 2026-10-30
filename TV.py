@@ -29,8 +29,16 @@ def tableView(tableStored, limiterRows, limiterColumns):
     infoSection.pack(anchor="w", padx=6, pady=6)
 
     # Command Box to type in for commands
-    infoBox = kin.Text(infoSection, bg="white", height=10, width=50)
+    infoBox = kin.Text(infoSection, bg="white", height=20, width=80)
     infoBox.pack()
+
+    # Holds search bar as their own section
+    searchHold =kin.Frame(infoSection)
+    searchHold.pack(anchor="w", pady=6)
+
+    # Search Bar to find information
+    searchSelection = kin.Entry(searchHold, width= 50)
+    searchSelection.pack(side="left")
 
     # Holds Buttons as their own section.
     buttonHold = kin.Frame(infoSection)
@@ -117,6 +125,52 @@ def tableView(tableStored, limiterRows, limiterColumns):
     pageRight = kin.Button(pageHold, text=">", command=lambda: pageClicks(1))
     pageRight.pack(side="left")
 
+    # This allows search bar to find data in the table
+    # by typing into the search bar and
+    # if nothing in entered it returns nothing.
+    def searchData():
+        findData = searchSelection.get().lower()
+        if not findData:
+            return
+
+        # searches exact matches
+        obtainRows = [
+            oRows for oRows in rowStarters
+            if any(
+                findData == str(theValues).lower()
+                for theValues in oRows
+            )
+        ]
+        print("Matching Results: ", len(obtainRows))
+
+        # Creates a window to display the gathered information.
+        searchDisplay = kin.Toplevel(tableDisplay)
+        searchDisplay.title("Search Results")
+        searchDisplay.geometry("800x400")
+
+        # Table it its own section.
+        searchAll = kin.Frame(searchDisplay)
+        searchAll.pack(anchor="w")
+
+        # Creates that table and lists the rows.
+        searchTable = t.Treeview(searchAll, columns=list(range(len(colHeaders))),
+                                 show="headings", height=15)
+        searchTable.pack()
+
+        # starts at 0 to show the headings.
+        startAt = 0
+        for theHeadings in colHeaders:
+            searchTable.heading(startAt, text=theHeadings)
+            searchTable.column(startAt, width=100, minwidth=50)
+            startAt = startAt + 1
+
+        # Gets the rows.
+        for oRows in obtainRows:
+            searchTable.insert("", "end", values = oRows)
+
+    # Search button to be able to search.
+    searchButton = kin.Button(searchHold, text="Search Data", command=searchData)
+    searchButton.pack(side="left")
 
 
     # Refreshes the contents for sets
