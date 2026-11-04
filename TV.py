@@ -1,8 +1,12 @@
 import tkinter as kin
 from tkinter import ttk as t
-import math as m
+
+# Sort allows the ascending and descending of the table.
 import sort
+# Search allows the search bar, buttons and search table to work.
 import search
+# TVnavi is for navigation like buttons
+import TVnavi
 
 #Rearrange to look nicer later
 #Displays the second screen called "Table View"
@@ -67,18 +71,7 @@ def tableView(tableStored, limiterRows, limiterColumns):
     # Sets a limit
     maxRows = len(rowStarters)
     maxColumns = len(colHeaders)
-
-    # Uses .ceil to make sure they are whole
-    maxPages = max(1, m.ceil(maxRows / limiterRows))
-    maxSets = max(1, m.ceil (maxColumns / limiterColumns))
-
-    # Page number counter.
-    pageCounter = kin.Label(pageHold, text=f"Page 1 of {maxPages}")
-    pageCounter.pack()
-
-    # Sets counter.
-    setCounter = kin.Label(setHold, text=f"Set 1 of {maxSets}")
-    setCounter.pack()
+    maxPages, maxSets = TVnavi.totalNavi(maxRows, maxColumns, limiterColumns, limiterRows)
 
     # Sets the positions for start and end of columns.
     firColumn = 0
@@ -87,72 +80,6 @@ def tableView(tableStored, limiterRows, limiterColumns):
     # Tracks the counts for columns and rows.
     firSet = 0
     firPage = 0
-
-    # User Story Sort
-    # Selected columns get sorted
-    def sortedCols(column):
-        sort.sortedCols(rowStarters, column)
-        # Uses this function to update the table.
-        refreshContents()
-
-    # Both use non local since they will be using variables
-    # outside their definitions.
-    # made a few adjustments.
-    def pageClicks(selected):
-        nonlocal firPage
-        firPage = firPage + selected
-        firPage = max(0, min(firPage, maxPages - 1))
-
-        pageCounter.config(text=f"Page {firPage + 1} of {maxPages}")
-
-        refreshContents()
-
-    # Displays correct clicks on buttons
-    def setClicks(selected):
-        nonlocal firSet, firColumn, endColumn
-        firSet = firSet + selected
-        firSet = max(0, min(firSet, maxSets - 1))
-
-        firColumn = firSet * limiterColumns
-        endColumn = firColumn + limiterColumns
-        setCounter.config(text=f"Set {firSet + 1} of {maxSets}")
-
-        refreshContents()
-
-    # Left and Right buttons for Sets to click over.
-    setLeft = kin.Button(setHold, text="<", command=lambda: setClicks(-1))
-    setLeft.pack(side="left")
-
-        
-    setRight = kin.Button(setHold, text=">", command=lambda: setClicks(1))
-    setRight.pack(side="left")
-
-    # Copy pasted sets for pages.
-    pageLeft = kin.Button(pageHold, text="<", command=lambda: pageClicks(-1))
-    pageLeft.pack(side="left")
-
-        
-    pageRight = kin.Button(pageHold, text=">", command=lambda: pageClicks(1))
-    pageRight.pack(side="left")
-
-    # This allows search bar to find data in the table
-    # by typing into the search bar and
-    # if nothing in entered it returns nothing.
-    def searchData():
-        findData = searchSelection.get().lower()
-        if not findData:
-            return
-        search.searchData(
-            tableDisplay, 
-            rowStarters, 
-            colHeaders, 
-            limiterRows, 
-            limiterColumns, 
-            findData)
-    
-    # Search button to be able to search.
-    searchButton = kin.Button(searchHold, text="Search Data", command=searchData)
-    searchButton.pack(side="left")
 
     # Refreshes the contents for sets
     def refreshContents():
@@ -185,6 +112,47 @@ def tableView(tableStored, limiterRows, limiterColumns):
         for dataRows in rowStarters[startRow:endRow]:
             tableColrow.insert("", "end", values = dataRows[firColumn:endColumn])
 
+    # User Story Sort
+    # Selected columns get sorted
+    def sortedCols(column):
+        sort.sortedCols(rowStarters, column)
+        # Uses this function to update the table.
+        refreshContents()
+
+    # This allows search bar to find data in the table
+    # by typing into the search bar and
+    # if nothing in entered it returns nothing.
+    def searchData():
+        findData = searchSelection.get().lower()
+        if not findData:
+            return
+        search.searchData(tableDisplay, rowStarters, colHeaders, limiterRows, limiterColumns, findData)
+    
+    # use nonlocal since they will be using variables
+    # outside their definitions.
+    # made a few adjustments.
+    # We use nonlocal because if it was in the definitions it
+    # would reset to 0 everytime.
+    def pageClicks(selected):
+        nonlocal firPage
+        firPage = TVnavi.pageClicks(selected, firPage, maxPages)
+        pageCounter.config(text=f"Page {firPage + 1} of {maxPages}")
+        refreshContents()
+
+    # Displays correct clicks on button
+    # This moves through the sets and columns instead of pages.
+    def setClicks(selected):
+        nonlocal firSet, firColumn, endColumn
+        firSet, firColumn, endColumn = TVnavi.setClicks(selected, firSet, limiterColumns, maxSets)
+        setCounter.config(text=f"Set {firSet + 1} of {maxSets}")
+        refreshContents()
+
+    # Search button to be able to search.
+    searchButton = kin.Button(searchHold, text="Search Data", command=searchData)
+    searchButton.pack(side="left")
+
+    # Allows for the page and set counters and buttons.
+    pageCounter, setCounter = TVnavi.buttonNavi(pageClicks, pageHold, maxPages, maxSets, setHold, setClicks)
 
     refreshContents()
     tableDisplay.mainloop()
