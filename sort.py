@@ -1,9 +1,6 @@
-# Sorting direction for columns
-sortedDirection = {}
-
 # User Story Sort
 # Selected columns get sorted
-def sortedCols(rowStarters, column):
+def sortedCols(rowStarters, column, sortedDirection):
 
     # Allows for ascending and descending for sorting.
     if sortedDirection.get(column, False) == False:

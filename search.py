@@ -1,6 +1,7 @@
 import tkinter as kin
 from tkinter import ttk as t
 import math as m
+import sort
 
 # Allows data to be found in the search bar
 # Checks each row for an exact match and returns that row.
@@ -20,6 +21,8 @@ def searchRows(rowStarters, findData):
 # Refreshes that page if needed.
 def searchData(tableDisplay, rowStarters, colHeaders, limiterRows, limiterColumns, findData):
     obtainRows = searchRows(rowStarters, findData)
+    # Seperate sortedDirection than TV so it doesnt affect the other.
+    sortedDirection = {}
 
     # Creates a window to display the gathered information.
     searchDisplay = kin.Toplevel(tableDisplay)
@@ -101,7 +104,7 @@ def searchData(tableDisplay, rowStarters, colHeaders, limiterRows, limiterColumn
         # Starts at 0 for headings
         startAt = 0
         for theHeadings in displayHeaders:
-            searchTable.heading(startAt, text=theHeadings)
+            searchTable.heading(startAt, text=theHeadings, command= lambda c=firColumn + startAt: sortedSearch(c))
             searchTable.column(startAt, width=100, minwidth=60)
             startAt = startAt + 1
 
@@ -114,4 +117,8 @@ def searchData(tableDisplay, rowStarters, colHeaders, limiterRows, limiterColumn
 
         for oRows in obtainRows[firRow:lastRow]:
             searchTable.insert("", "end", values=oRows[firColumn:lastColumn])
+
+    def sortedSearch(column):
+        sort.sortedCols(obtainRows, column, sortedDirection)
+        refreshSearch()
     refreshSearch()

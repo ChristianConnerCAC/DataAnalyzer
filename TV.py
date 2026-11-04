@@ -7,6 +7,8 @@ import sort
 import search
 # TVnavi is for navigation like buttons
 import TVnavi
+# Command Bar Rules
+import command
 
 #Rearrange to look nicer later
 #Displays the second screen called "Table View"
@@ -20,7 +22,7 @@ def tableView(tableStored, limiterRows, limiterColumns):
     # Creates another window to fix an issue I couldn't solve.
     csvDisplay = kin.Toplevel(tableDisplay)
     csvDisplay.title("CSV Table")
-    csvDisplay.geometry("600x400")
+    csvDisplay.geometry("800x400")
 
     # Holds the table in its own section.
     tableWhole = kin.Frame(csvDisplay)
@@ -28,8 +30,13 @@ def tableView(tableStored, limiterRows, limiterColumns):
 
 
     #Treeview table display and fills the window.
-    tableColrow = t.Treeview(tableWhole, show="headings", height=10)
+    # Height determines how many rows are seen.
+    # Tree headings displays both for treeview
+    tableColrow = t.Treeview(tableWhole, show="tree headings", height=10)
     tableColrow.pack(anchor="nw")
+
+    tableColrow.heading("#0", text="")
+    tableColrow.column("#0", width=40, stretch=False)
 
     # This holds buttons for the command screen
     infoSection = kin.Frame(tableDisplay)
@@ -38,6 +45,7 @@ def tableView(tableStored, limiterRows, limiterColumns):
     # Command Box to type in for commands
     infoBox = kin.Text(infoSection, bg="white", height=20, width=80)
     infoBox.pack()
+    command.helpCommand(infoBox)
 
     # Holds search bar as their own section
     searchHold =kin.Frame(infoSection)
@@ -96,10 +104,11 @@ def tableView(tableStored, limiterRows, limiterColumns):
         # Starts at 0
         # Displays columns heading and width
         # Moves columns over to the next.
+        # Allows columns to have numbers to read easier.
         startAt = 0
         for each in displayHeaders:
-            tableColrow.heading(startAt, text=each, command=lambda c=firColumn + startAt: sortedCols(c))
-            tableColrow.column(startAt, width=60, minwidth=60)
+            tableColrow.heading(startAt, text=f"({startAt + firColumn + 1}) {each}", command = lambda a=firColumn + startAt: sortedCols(a))
+            tableColrow.column(startAt, width=75, minwidth=70)
             startAt = startAt + 1
 
         for displayed in tableColrow.get_children():
@@ -109,13 +118,17 @@ def tableView(tableStored, limiterRows, limiterColumns):
         endRow = startRow + limiterRows
 
         # Adds the rows to the table.
+        # Allows for rows to have their own numbers to easily read
         for dataRows in rowStarters[startRow:endRow]:
-            tableColrow.insert("", "end", values = dataRows[firColumn:endColumn])
+            tableColrow.insert("", "end", text=f"({startRow + 1})", values = dataRows[firColumn:endColumn])
+            startRow = startRow + 1
+    # Sorting direction for columns
+    sortedDirection = {}
 
     # User Story Sort
     # Selected columns get sorted
     def sortedCols(column):
-        sort.sortedCols(rowStarters, column)
+        sort.sortedCols(rowStarters, column, sortedDirection)
         # Uses this function to update the table.
         refreshContents()
 
