@@ -1,5 +1,6 @@
 import tkinter as kin
 from tkinter import ttk as t
+import time
 
 # Sort allows the ascending and descending of the table.
 import sort
@@ -45,7 +46,6 @@ def tableView(tableStored, limiterRows, limiterColumns):
     # Command Box to type in for commands
     infoBox = kin.Text(infoSection, bg="white", height=20, width=80)
     infoBox.pack()
-    command.helpCommand(infoBox)
 
     # Holds search bar as their own section
     searchHold =kin.Frame(infoSection)
@@ -76,6 +76,19 @@ def tableView(tableStored, limiterRows, limiterColumns):
         colHeaders = []
         rowStarters = []
 
+    # Allows to update the table with new information
+    # Takes those updates rows and columns
+    # Counts the rows and columns
+    # Updates the total pages and sets then refreshes.
+    def entryUpdate():
+        nonlocal maxPages, maxSets, maxRows, maxColumns, rowStarters, colHeaders
+        colHeaders = tableStored[0]
+        rowStarters = tableStored[1:]
+        maxRows = len(rowStarters)
+        maxColumns = len(colHeaders)
+        maxPages, maxSets = TVnavi.totalNavi(maxRows, maxColumns, limiterColumns, limiterRows)
+        refreshContents()
+
     # Sets a limit
     maxRows = len(rowStarters)
     maxColumns = len(colHeaders)
@@ -91,6 +104,7 @@ def tableView(tableStored, limiterRows, limiterColumns):
 
     # Refreshes the contents for sets
     def refreshContents():
+        nonFunc2  = time.perf_counter()
         displayHeaders = colHeaders[firColumn:endColumn]
 
         # Number of columns into a list.
@@ -122,6 +136,12 @@ def tableView(tableStored, limiterRows, limiterColumns):
         for dataRows in rowStarters[startRow:endRow]:
             tableColrow.insert("", "end", text=f"({startRow + 1})", values = dataRows[firColumn:endColumn])
             startRow = startRow + 1
+
+    # We imported time to pass a non-func test
+    # This tests how fast they load
+        endFunc2 = time.perf_counter()
+        calcFunc2 = endFunc2 - nonFunc2
+        print(f"Updated in {calcFunc2:.6f} seconds")
     # Sorting direction for columns
     sortedDirection = {}
 
@@ -166,6 +186,6 @@ def tableView(tableStored, limiterRows, limiterColumns):
 
     # Allows for the page and set counters and buttons.
     pageCounter, setCounter = TVnavi.buttonNavi(pageClicks, pageHold, maxPages, maxSets, setHold, setClicks)
-
+    command.helpCommand(infoBox, tableStored, entryUpdate)
     refreshContents()
     tableDisplay.mainloop()

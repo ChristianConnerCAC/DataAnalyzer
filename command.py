@@ -1,18 +1,73 @@
 # end always puts the line after in this case starts at the beginning.
-def helpCommand(infoBox):
+def helpCommand(infoBox, tableStored, entryUpdate):
     infoBox.insert("end", 'Type "Help" without the " into the command box to get started.\n')
     infoBox.insert("end", 'Command Box: ')
+    entryPass = [False]
 
     # User can press Enter and create another command box.
     def enterKey(buttonPress):
+
+        # Finds the command entered at current line
+        # Replaces those instructions
+        # Adds the new information and refreshes table
+        # Then checks if they want to add a row or columy with entry
+        # "end-1c linestart" = Tkinter Beginning of the current line
+        # "end-1c" = end of the text
+        findCommand = infoBox.get("end-1c linestart", "end-1c")
+        if entryPass[0] == True:
+            findCommand = findCommand.replace("Add a row or column: ", "")
+            entry(tableStored, findCommand)
+            entryUpdate()
+            entryPass[0] = False
+            infoBox.insert("end", "\nEntry added.")
+        elif findCommand.replace("Command Box: ", "").lower() == "entry":
+            infoBox.insert("end", "\nAdd a row or column: ")
+            entryPass[0] = True
+            return "break"
         newCommand(infoBox)
         return "break"
-    #tkinter registers <Return> as enter
+
+    # TabKey allows for the separation
+    def tabKey(buttonPress):
+        infoBox.insert("insert", "\t")
+        return "break"
+
+    #tkinter registers <Return> as Enter
+    #tkinter registers <Tab> as Tab
     infoBox.bind("<Return>", enterKey)
+    infoBox.bind("<Tab>", tabKey)
 
 # Creates a new command box on a new line
 def newCommand(infoBox):
     infoBox.insert("end", "\nCommand Box: ")
     #Follows the last line made.
     infoBox.see("end")
-    
+
+# This allows for a new row or column to the table
+# By separating the information using tab
+# Then checks if the user wants to add a row
+# Or checks if the user wants to add a column.
+
+def entry(tableStored, findCommand):
+    findData = findCommand.split("\t")
+    rcCommand = findData[0]
+    rcPosition = int(rcCommand[1:-1])
+
+    if rcCommand[0].upper() == "R":
+        if rcCommand[-1] == "-":
+            rowPosition = rcPosition - 1
+        else:
+            rowPosition = rcPosition
+        tableStored.insert(rowPosition + 1, findData[1:])
+    elif rcCommand[0].upper() == "C":
+        if rcCommand[-1] == "-":
+            columnPosition = rcPosition - 1
+        else:
+            columnPosition = rcPosition
+        # Adds the new column to the row.
+        for fixedPlace in range(len(tableStored)):
+            if fixedPlace + 1 < len(findData):
+                tableStored[fixedPlace].insert(columnPosition, findData[fixedPlace + 1])
+            else:
+                # Cell is left empty if no value.
+                tableStored[fixedPlace].insert(columnPosition, "")
