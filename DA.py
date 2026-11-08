@@ -2,6 +2,7 @@ import tkinter as kin
 from tkinter import filedialog as fd
 import csv
 import TV
+import guidance
 
 limiterRows = 10
 limiterColumns = 10
@@ -25,15 +26,28 @@ def csvFile():
 # .geometry sets the width and height for the display.
 mainDisplay = kin.Tk()
 mainDisplay.title("Data Analyzer")
-mainDisplay.geometry("1000x600")
+mainDisplay.geometry("1200x600")
 
 # Creations of the Main Title.
 # Shows at the top centered.
 # .label creates a label in the display.
 # .pack positions where that label goes.
 # Using pady to make a title appear on the top of the screen.
-title = kin.Label(mainDisplay, text= "Data Analyzer", font=("Courier New", 30, "bold"))
-title.pack(pady = 10)
+title = kin.Label(mainDisplay)
+title.pack(pady=5)
+
+dataTitle = kin.Label(title, text="Data", font=("Courier New", 30, "bold", "underline"),
+                          foreground="green")
+dataTitle.pack(side="left")
+
+analyzerTitle = kin.Label(title, text="Analyzer", font=("Courier New", 30))
+analyzerTitle.pack(side="left")
+
+guidance.naviHover("The Data Analyzer is a organization tool.\n"
+                   "Users can import data or manually enter into tables\n"
+                   "Users can organize, view, and edit their data.\n"
+                   "Then easily export it.",dataTitle)
+
 
 # .Frame creates a frame in mainDisplay.
 # positions the notification in the center.
@@ -42,7 +56,7 @@ notifMessage.pack(fill="x", padx=15)
 
 # We add a bracket for decoration to hold the message
 # on the left side.
-leftBrkt = kin.Label(notifMessage, text="[", font=("Courier New", 35))
+leftBrkt = kin.Label(notifMessage, text="[", font=("Courier New", 50))
 leftBrkt.pack(side="left")
 
 # The Contents inside the left and right brackets
@@ -52,14 +66,15 @@ leftBrkt.pack(side="left")
 insideNotif = kin.Label(
     notifMessage,
     text = "Welcome to the Data Analyzer, please either hover over \n"
-            "Create Table, Load CSV, or Load Template down below for more information",
+            "Create Table, Load CSV, or Load Template down below for more information.\n"
+            "If you're lost any green, bolded, and / or underlined words, hover over them for guidance.",
     font = ("Courier New", 15),
     justify = "center"
 )
-insideNotif.pack(side="left", padx=5)
+insideNotif.pack(side="left", padx=5, expand=True)
 
 # The right side bracket decoration to hold the message
-rightBrkt = kin.Label(notifMessage, text="]", font=("Courier New", 35))
+rightBrkt = kin.Label(notifMessage, text="]", font=("Courier New", 50))
 rightBrkt.pack(side="right")
 
 # multipleTabs is a main frame that holds the entire section
@@ -72,9 +87,20 @@ multipleTabs.pack(fill="both", expand=True, padx=25, pady=(220,10))
 # Creates titles above the squared sections
 # Uses a fixed x and y position for the first title
 # then uses relative x to space out the other titles.
-kin.Label(multipleTabs, text = "Create Table", font=("Courier New", 15, "bold")).place(x=105, y=5)
-kin.Label(multipleTabs, text = "Load CSV", font=("Courier New", 15, "bold")).place(relx= 1/3, x=105, y=5)
-kin.Label(multipleTabs, text = "Load Template", font=("Courier New", 15, "bold")).place(relx= 2/3, x=105, y=5)
+kin.Label(multipleTabs, text = "", font=("Courier New", 15, "bold")).place(x=105, y=5)
+csvTitle = kin.Frame(multipleTabs)
+csvTitle.place(relx=1/3, x=130, y=5)
+
+loadTitle = kin.Label(csvTitle, text="Load", font=("Courier New", 15))
+loadTitle.pack(side="left")
+
+csvHover = kin.Label(csvTitle, text="CSV", font=("Courier New", 15, "bold", "underline"),
+                     foreground="green")
+csvHover.pack(side="left")
+guidance.naviHover("Click the button below,\n"
+                   "To access your File Library to\n"
+                   "load a .CSV file into a Table.", csvHover)
+kin.Label(multipleTabs, text = "", font=("Courier New", 15, "bold")).place(relx= 2/3, x=105, y=5)
 
 
 # Now we add a frame inside multipleTabs that holds
