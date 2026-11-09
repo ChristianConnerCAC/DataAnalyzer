@@ -2,6 +2,7 @@ import tkinter as kin
 from tkinter import ttk as t
 import math as m
 import sort
+import guidance
 
 # Allows data to be found in the search bar
 # Checks each row for an exact match and returns that row.

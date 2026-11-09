@@ -1,6 +1,7 @@
 import tkinter as kin
 from tkinter import ttk as t
 import time
+import guidance
 
 # Sort allows the ascending and descending of the table.
 import sort
@@ -177,12 +178,15 @@ def tableView(tableStored, limiterRows, limiterColumns):
     def setClicks(selected):
         nonlocal firSet, firColumn, endColumn
         firSet, firColumn, endColumn = TVnavi.setClicks(selected, firSet, limiterColumns, maxSets)
-        setCounter.config(text=f"Set {firSet + 1} of {maxSets}")
+        setCounter.config(text=f"{firSet + 1} of {maxSets}")
         refreshContents()
 
     # Search button to be able to search.
-    searchButton = kin.Button(searchHold, text="Search Data", command=searchData)
+    searchButton = kin.Button(searchHold, text="Search", command=searchData, font=("Courier New", 12, "bold", "underline"), foreground="green")
     searchButton.pack(side="left")
+
+    guidance.naviHover("Allows the user to search for\n"
+                       "specific information within the table.", searchButton)
 
     # Allows for the page and set counters and buttons.
     pageCounter, setCounter = TVnavi.buttonNavi(pageClicks, pageHold, maxPages, maxSets, setHold, setClicks)

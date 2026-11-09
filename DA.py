@@ -36,6 +36,7 @@ mainDisplay.geometry("1200x600")
 title = kin.Label(mainDisplay)
 title.pack(pady=5)
 
+# Splits Data and Analzyer to accomodate for naviHover guidance
 dataTitle = kin.Label(title, text="Data", font=("Courier New", 30, "bold", "underline"),
                           foreground="green")
 dataTitle.pack(side="left")
@@ -88,6 +89,9 @@ multipleTabs.pack(fill="both", expand=True, padx=25, pady=(220,10))
 # Uses a fixed x and y position for the first title
 # then uses relative x to space out the other titles.
 kin.Label(multipleTabs, text = "", font=("Courier New", 15, "bold")).place(x=105, y=5)
+
+# Splits Load and CSV to accomodate for naviHover guidance.
+# Will do for the rest when implemented.
 csvTitle = kin.Frame(multipleTabs)
 csvTitle.place(relx=1/3, x=130, y=5)
 

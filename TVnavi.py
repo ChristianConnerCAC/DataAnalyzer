@@ -1,5 +1,6 @@
 import tkinter as kin
 import math as m
+import guidance
 
 # total amount for pages and sets for navigation.
 def totalNavi(maxRows, maxColumns, limiterColumns, limiterRows):
@@ -27,12 +28,31 @@ def setClicks(selected, firSet, limiterColumns, maxSets):
 
 def buttonNavi(pageClicks, pageHold, maxPages, maxSets, setHold, setClicks):
     # Page number counter.
-    pageCounter = kin.Label(pageHold, text=f"Page 1 of {maxPages}")
-    pageCounter.pack()
+    # Changed the formats from previous versions to accomodate for naviHover guidance
+    pageTitle = kin.Frame(pageHold)
+    pageTitle.pack()
+
+    pageHover = kin.Label(pageTitle, text="Page", font=("Courier New", 12, "bold", "underline"), foreground="green")
+    pageHover.pack(side="left")
+
+    pageCounter = kin.Label(pageTitle, text=f"1 of {maxPages}")
+    pageCounter.pack(side="left")
+
+    guidance.naviHover("Shows pages (of 10 max) of rows\n"
+                       "to be displayed per page.", pageHover)
 
     # Sets counter.
-    setCounter = kin.Label(setHold, text=f"Set 1 of {maxSets}")
-    setCounter.pack()
+    setTitle = kin.Frame(setHold)
+    setTitle.pack()
+
+    setHover = kin.Label(setTitle, text="Set", font=("Courier New", 12, "bold", "underline"), foreground="green")
+    setHover.pack(side="left")
+
+    setCounter = kin.Label(setTitle, text=f"1 of {maxSets}")
+    setCounter.pack(side="left")
+
+    guidance.naviHover("Shows a set (of 10 max) of columns\n"
+                       "to be displayed per set.", setHover)
 
     # Left and Right buttons for Sets to click over.
     setLeft = kin.Button(setHold, text="<", command=lambda: setClicks(-1))
