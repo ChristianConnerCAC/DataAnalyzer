@@ -1,8 +1,12 @@
+import copy as c
+
 # end always puts the line after in this case starts at the beginning.
-def helpCommand(infoBox, tableStored, entryUpdate):
+def helpCommand(infoBox, tableStored, entryUpdate, closeTable):
     infoBox.insert("end", 'Type "Help" without the " into the command box to get started.\n')
     infoBox.insert("end", 'Command Box: ')
     entryPass = [False]
+    undoHistory = []
+    redoHistory = []
 
     # User can press Enter and create another command box.
     def enterKey(buttonPress):
@@ -18,10 +22,34 @@ def helpCommand(infoBox, tableStored, entryUpdate):
 
         if entryPass[0] == True:
             findCommand = findCommand.replace("Add a row or column: ", "")
+            undoHistory.append(c.deepcopy(tableStored))
+            redoHistory.clear()
             entry(tableStored, findCommand)
             entryUpdate()
             entryPass[0] = False
             infoBox.insert("end", "\nEntry added.")
+
+        elif findCommand.lower() == "undo":
+            if undoHistory:
+                redoHistory.append(c.deepcopy(tableStored))
+                tableStored[:] = undoHistory.pop()
+                entryUpdate()
+                infoBox.insert("end", "\n Undone last entry.")
+            else:
+                infoBox.insert("end", "\n Undid nothing.")
+
+        elif findCommand.lower() == "redo":
+            if redoHistory:
+                undoHistory.append(c.deepcopy(tableStored))
+                tableStored[:] = redoHistory.pop()
+                entryUpdate()
+                infoBox.insert("end", "\n Restored Entry.")
+            else:
+                infoBox.insert("end", "\n Nothing to Restore.")
+
+        elif findCommand.lower() == "close":
+            closeTable()
+            return "break"
 
         # Commentary on what help does
         # When the user types help      
@@ -29,6 +57,9 @@ def helpCommand(infoBox, tableStored, entryUpdate):
             infoBox.insert("end", "\n Type Help as the prefix then what you need help on in the list below.")
             infoBox.insert("end", "\n For Example: Help Entry")
             infoBox.insert("end", "\nAvailable Commands:")
+            infoBox.insert("end", "\nUndo - Undoes the previous command")
+            infoBox.insert("end", "\nRedo = Restores the command.")
+            infoBox.insert("end", "\nClose = Closes the table and returns to main screen.")
             infoBox.insert("end", "\nEntry - Manually adds a row or column to your table.")
 
         # Commentary on what help entry does

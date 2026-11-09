@@ -122,7 +122,14 @@ def tableView(tableStored, limiterRows, limiterColumns):
         # Allows columns to have numbers to read easier.
         startAt = 0
         for each in displayHeaders:
-            tableColrow.heading(startAt, text=f"({startAt + firColumn + 1}) {each}", command = lambda a=firColumn + startAt: sortedCols(a))
+            if firColumn + startAt in sortedDirection:
+                if sortedDirection[firColumn + startAt] == True:
+                    sortText = " (Asc)"
+                else:
+                    sortText = " (Des)"
+            else:
+                sortText = ""
+            tableColrow.heading(startAt, text=f"({startAt + firColumn + 1}) {each}{sortText}", command = lambda a=firColumn + startAt: sortedCols(a))
             tableColrow.column(startAt, width=75, minwidth=70)
             startAt = startAt + 1
 
@@ -142,13 +149,18 @@ def tableView(tableStored, limiterRows, limiterColumns):
     # This tests how fast they load
         endFunc2 = time.perf_counter()
         calcFunc2 = endFunc2 - nonFunc2
-        print(f"Updated in {calcFunc2:.6f} seconds")
+        infoBox.insert("end", f"Loaded / Updated in {calcFunc2:.6f} seconds")
+        infoBox.see("end")
     # Sorting direction for columns
     sortedDirection = {}
 
     # User Story Sort
+    # Clears the asc and des.
     # Selected columns get sorted
     def sortedCols(column):
+        for click in list(sortedDirection):
+            if click != column:
+                del sortedDirection[click]
         sort.sortedCols(rowStarters, column, sortedDirection)
         # Uses this function to update the table.
         refreshContents()
@@ -188,8 +200,11 @@ def tableView(tableStored, limiterRows, limiterColumns):
     guidance.naviHover("Allows the user to search for\n"
                        "specific information within the table.", searchButton)
 
+    def closeTable():
+        tableDisplay.destroy()
+
     # Allows for the page and set counters and buttons.
     pageCounter, setCounter = TVnavi.buttonNavi(pageClicks, pageHold, maxPages, maxSets, setHold, setClicks)
-    command.helpCommand(infoBox, tableStored, entryUpdate)
+    command.helpCommand(infoBox, tableStored, entryUpdate, closeTable)
     refreshContents()
     tableDisplay.mainloop()

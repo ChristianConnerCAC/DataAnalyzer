@@ -155,6 +155,10 @@ leftBox.grid(row = 0, column = 0, sticky="nsew")
 createButton = kin.Button(leftBox, text="Confirm", font=("Courier New", 12, "bold"), width=20, height=3, command=createTable)
 createButton.pack(pady=(10,10))
 
+createCost = kin.Label(leftBox, text="*Manual entry may take longer \n"
+                       "than the other options", font=("Courier New", 9))
+createCost.pack(anchor="center")
+
 # repeated for middle box.
 midBox = kin.Frame(descBoxes, height = 225, borderwidth = 1, relief = "solid")
 midBox.grid(row = 0, column = 1, sticky="nsew")
@@ -164,6 +168,10 @@ midBox.grid(row = 0, column = 1, sticky="nsew")
 # using the def csvFile
 libraryButton = kin.Button(midBox, text="File Library", font= ("Courier New", 12, "bold"), width=20, height = 3, command=csvFile)
 libraryButton.pack(pady=(10, 10))
+
+csvCost = kin.Label(midBox, text="*Faster than manually entering data \n"
+                    "when a file is already available", font=("Courier New", 9))
+csvCost.pack(anchor="center")
 
 # repeated for right box.
 rightBox = kin.Frame(descBoxes, height = 225, borderwidth = 1, relief = "solid")
