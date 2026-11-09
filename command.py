@@ -14,18 +14,48 @@ def helpCommand(infoBox, tableStored, entryUpdate):
         # "end-1c linestart" = Tkinter Beginning of the current line
         # "end-1c" = end of the text
         findCommand = infoBox.get("end-1c linestart", "end-1c")
+        findCommand = findCommand.replace("Command Box: ", "", 1)
+
         if entryPass[0] == True:
             findCommand = findCommand.replace("Add a row or column: ", "")
             entry(tableStored, findCommand)
             entryUpdate()
             entryPass[0] = False
             infoBox.insert("end", "\nEntry added.")
+
+        # Commentary on what help does
+        # When the user types help      
+        elif findCommand.lower() == "help":
+            infoBox.insert("end", "\n Type Help as the prefix then what you need help on in the list below.")
+            infoBox.insert("end", "\n For Example: Help Entry")
+            infoBox.insert("end", "\nAvailable Commands:")
+            infoBox.insert("end", "\nEntry - Manually adds a row or column to your table.")
+
+        # Commentary on what help entry does
+        # When the user types help entry.
+        elif findCommand.lower() == "help entry":
+            infoBox.insert("end", "\n Entry allows you to add a row or column to your table.")
+            infoBox.insert("end", "\n Use R (for Row) followed by a row number shown on the table to add a row.")
+            infoBox.insert("end", "\n Use C (for Column) followed by a row number shown on the table to add a Column.")
+            infoBox.insert("end", "\n After the number follow it with a '+' or '-' to go after or before the row / column.")
+            infoBox.insert("end", "\n For Example: R1+ = Add this Row After Row 1 on the table making your add on Row 2.")
+            infoBox.insert("end", "\n While R1- = Add this row Before Row 1. Making your new one in R1 and moving the old R1 forward")
+            infoBox.insert("end", "\n When you manually place in press Tab for each new piece of data")
+            infoBox.insert("end", "\n Example: R1+ [Tab] 1 [Tab] 2 [Tab] 3 [Tab] 4 (Tab is your seperator.)")
+
+        # Commentary for entry
         elif findCommand.replace("Command Box: ", "").lower() == "entry":
             infoBox.insert("end", "\nAdd a row or column: ")
             entryPass[0] = True
             return "break"
+
+        # Error handling for other than what we have in commands.
+        else:
+            infoBox.insert("end",f"\n Incorrect Input Command: {findCommand}")
+            infoBox.insert("end","\n Please try again. Type Help to see available commands.")
         newCommand(infoBox)
         return "break"
+
 
     # TabKey allows for the separation
     def tabKey(buttonPress):
@@ -38,10 +68,11 @@ def helpCommand(infoBox, tableStored, entryUpdate):
     infoBox.bind("<Tab>", tabKey)
 
 # Creates a new command box on a new line
-def newCommand(infoBox):
+def newCommand(infoBox):#
     infoBox.insert("end", "\nCommand Box: ")
     #Follows the last line made.
     infoBox.see("end")
+    infoBox.yview("scroll", -infoBox.winfo_height(), "pixels")
 
 # This allows for a new row or column to the table
 # By separating the information using tab

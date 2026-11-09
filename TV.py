@@ -45,7 +45,7 @@ def tableView(tableStored, limiterRows, limiterColumns):
     infoSection.pack(anchor="w", padx=6, pady=6)
 
     # Command Box to type in for commands
-    infoBox = kin.Text(infoSection, bg="white", height=20, width=80)
+    infoBox = kin.Text(infoSection, bg="white", height=20, width=110)
     infoBox.pack()
 
     # Holds search bar as their own section

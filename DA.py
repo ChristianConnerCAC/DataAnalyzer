@@ -20,6 +20,11 @@ def csvFile():
             tableStored = list(readCSV)
         TV.tableView(tableStored, limiterRows, limiterColumns)
 
+# An empty table to be created.
+def createTable():
+    tableStored = [[""], [""]]
+    TV.tableView(tableStored, limiterRows, limiterColumns)
+
 
 # kin.Tk allows creates the main window.
 # .title sets the name in the bar.
@@ -67,7 +72,7 @@ leftBrkt.pack(side="left")
 insideNotif = kin.Label(
     notifMessage,
     text = "Welcome to the Data Analyzer, please either hover over \n"
-            "Create Table, Load CSV, or Load Template down below for more information.\n"
+            "Create Table, or Load CSV down below for more information.\n"
             "If you're lost any green, bolded, and / or underlined words, hover over them for guidance.",
     font = ("Courier New", 15),
     justify = "center"
@@ -88,7 +93,17 @@ multipleTabs.pack(fill="both", expand=True, padx=25, pady=(220,10))
 # Creates titles above the squared sections
 # Uses a fixed x and y position for the first title
 # then uses relative x to space out the other titles.
-kin.Label(multipleTabs, text = "", font=("Courier New", 15, "bold")).place(x=105, y=5)
+createTitle = kin.Frame(multipleTabs)
+createTitle.place(x=105, y=5)
+
+createLabel = kin.Label(createTitle, text="Create", font=("Courier New", 15))
+createLabel.pack(side="left")
+
+tableHover = kin.Label(createTitle, text="Table", font=("Courier New", 15, "bold", "underline"), foreground="green")
+tableHover.pack(side="left")
+
+guidance.naviHover(" Click 'Confirm' below to create an empty table \n"
+                   "Where you can manually enter your data.", tableHover)
 
 # Splits Load and CSV to accomodate for naviHover guidance.
 # Will do for the rest when implemented.
@@ -136,6 +151,9 @@ descBoxes.columnconfigure(2, weight=1, uniform="infoBoxes")
 # this just expands the box on all corners.
 leftBox = kin.Frame(descBoxes, height = 225, borderwidth = 1, relief = "solid")
 leftBox.grid(row = 0, column = 0, sticky="nsew")
+
+createButton = kin.Button(leftBox, text="Confirm", font=("Courier New", 12, "bold"), width=20, height=3, command=createTable)
+createButton.pack(pady=(10,10))
 
 # repeated for middle box.
 midBox = kin.Frame(descBoxes, height = 225, borderwidth = 1, relief = "solid")
