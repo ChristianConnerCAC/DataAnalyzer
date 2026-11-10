@@ -1,12 +1,19 @@
 import copy as c
 
 # end always puts the line after in this case starts at the beginning.
-def helpCommand(infoBox, tableStored, entryUpdate, closeTable):
+def helpCommand(infoBox, tableStored, entryUpdate, closeTable, calcFunc2):
     infoBox.insert("end", 'Type "Help" without the " into the command box to get started.\n')
+    infoBox.insert("end", f"Table Loaded in {calcFunc2:.6f} seconds\n")
     infoBox.insert("end", 'Command Box: ')
+    infoBox.mark_set("input_start", "end-1c")
+    infoBox.mark_gravity("input_start", "left")
     entryPass = [False]
     undoHistory = []
     redoHistory = []
+
+    def backspaceKey(buttonPress):
+        if infoBox.compare("insert", "<=", "input_start"):
+            return "break"
 
     # User can press Enter and create another command box.
     def enterKey(buttonPress):
@@ -22,31 +29,53 @@ def helpCommand(infoBox, tableStored, entryUpdate, closeTable):
 
         if entryPass[0] == True:
             findCommand = findCommand.replace("Add a row or column: ", "")
-            undoHistory.append(c.deepcopy(tableStored))
-            redoHistory.clear()
-            entry(tableStored, findCommand)
-            entryUpdate()
-            entryPass[0] = False
-            infoBox.insert("end", "\nEntry added.")
 
+            if findCommand.lower() == "end":
+                entryPass[0] = False
+                infoBox.insert("end", "\nEntry stopped: Type other commands or Help.")
+
+            elif entry(tableStored, findCommand):
+                undoHistory.append(c.deepcopy(tableStored))
+                redoHistory.clear()
+                entryUpdate()
+                entryPass[0] = False
+                infoBox.insert("end", "\nEntry added.")
+                # Mark set and Mark Gravity
+            else:
+                infoBox.insert("end", "\nIncorrect Entry.")
+                infoBox.insert("end", "\nPlease try again or type End to stop the command.")
+                infoBox.insert("end", "\n Add a row or column: ")
+                infoBox.mark_set("input_start", "end-1c")
+                infoBox.mark_gravity("input_start", "left")
+                return "break"
+        # This allows the usage of Undo in the command bar
+        # Gives back their last entry
         elif findCommand.lower() == "undo":
             if undoHistory:
+                # It will save the current so the user can redo it later if needed.
+                # Then resotres the previous version of the table.
                 redoHistory.append(c.deepcopy(tableStored))
                 tableStored[:] = undoHistory.pop()
+                # Updates the table for the changes.
                 entryUpdate()
                 infoBox.insert("end", "\n Undone last entry.")
             else:
                 infoBox.insert("end", "\n Undid nothing.")
-
+        # This allows usage of  Redo in the command bar
+        # Puts back what was taken away.
         elif findCommand.lower() == "redo":
             if redoHistory:
+                # Saves the current table if user wants to undo it again.
+                # Restores the entry if undid.
                 undoHistory.append(c.deepcopy(tableStored))
                 tableStored[:] = redoHistory.pop()
+                # Updates the table.
                 entryUpdate()
                 infoBox.insert("end", "\n Restored Entry.")
             else:
                 infoBox.insert("end", "\n Nothing to Restore.")
-
+        
+        # Closes the program back to main screen.
         elif findCommand.lower() == "close":
             closeTable()
             return "break"
@@ -77,6 +106,9 @@ def helpCommand(infoBox, tableStored, entryUpdate, closeTable):
         # Commentary for entry
         elif findCommand.replace("Command Box: ", "").lower() == "entry":
             infoBox.insert("end", "\nAdd a row or column: ")
+            infoBox.mark_set("input_start","end-1c")
+            infoBox.mark_gravity("input_start", "left")
+
             entryPass[0] = True
             return "break"
 
@@ -97,22 +129,41 @@ def helpCommand(infoBox, tableStored, entryUpdate, closeTable):
     #tkinter registers <Tab> as Tab
     infoBox.bind("<Return>", enterKey)
     infoBox.bind("<Tab>", tabKey)
+    infoBox.bind("<BackSpace>", backspaceKey)
 
 # Creates a new command box on a new line
 def newCommand(infoBox):#
     infoBox.insert("end", "\nCommand Box: ")
+    infoBox.mark_set("input_start", "end-1c")
+    infoBox.mark_gravity("input_start", "left")
     #Follows the last line made.
     infoBox.see("end")
     infoBox.yview("scroll", -infoBox.winfo_height(), "pixels")
 
 # This allows for a new row or column to the table
 # By separating the information using tab
-# Then checks if the user wants to add a row
 # Or checks if the user wants to add a column.
 
 def entry(tableStored, findCommand):
+    # Separates the command from the data entered by user
+    # Then gets a position number from the command
     findData = findCommand.split("\t")
     rcCommand = findData[0]
+    # Then checks the command if their is enough information
+    if len(rcCommand) < 3:
+        return False
+    # Checks a user is adding a row or column
+    if rcCommand[0].upper() != "R":
+        if rcCommand[0].upper() != "C":
+            return False
+    # Checks before or after 
+    if rcCommand[-1] != "+":
+        if rcCommand[-1] != "-":
+            return False
+    # Checks position is a number
+    if rcCommand[1:-1].isdigit() == False:
+        return False
+    # Then checks if the user wants to add a row
     rcPosition = int(rcCommand[1:-1])
 
     if rcCommand[0].upper() == "R":
@@ -133,3 +184,4 @@ def entry(tableStored, findCommand):
             else:
                 # Cell is left empty if no value.
                 tableStored[fixedPlace].insert(columnPosition, "")
+    return True

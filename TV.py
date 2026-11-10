@@ -103,9 +103,9 @@ def tableView(tableStored, limiterRows, limiterColumns):
     firSet = 0
     firPage = 0
 
+
     # Refreshes the contents for sets
     def refreshContents():
-        nonFunc2  = time.perf_counter()
         displayHeaders = colHeaders[firColumn:endColumn]
 
         # Number of columns into a list.
@@ -145,12 +145,6 @@ def tableView(tableStored, limiterRows, limiterColumns):
             tableColrow.insert("", "end", text=f"({startRow + 1})", values = dataRows[firColumn:endColumn])
             startRow = startRow + 1
 
-    # We imported time to pass a non-func test
-    # This tests how fast they load
-        endFunc2 = time.perf_counter()
-        calcFunc2 = endFunc2 - nonFunc2
-        infoBox.insert("end", f"Loaded / Updated in {calcFunc2:.6f} seconds")
-        infoBox.see("end")
     # Sorting direction for columns
     sortedDirection = {}
 
@@ -205,6 +199,15 @@ def tableView(tableStored, limiterRows, limiterColumns):
 
     # Allows for the page and set counters and buttons.
     pageCounter, setCounter = TVnavi.buttonNavi(pageClicks, pageHold, maxPages, maxSets, setHold, setClicks)
-    command.helpCommand(infoBox, tableStored, entryUpdate, closeTable)
+
+    # We imported time to pass a non-func test
+    # This tests how fast they load
+    nonFunc2 = time.perf_counter()
     refreshContents()
+    endFunc2 = time.perf_counter()
+    calcFunc2 = endFunc2 - nonFunc2
+    infoBox.see("end")
+
+    command.helpCommand(infoBox, tableStored, entryUpdate, closeTable, calcFunc2)
+    
     tableDisplay.mainloop()
