@@ -14,6 +14,9 @@ def helpCommand(infoBox, tableStored, entryUpdate, closeTable, calcFunc2):
     def backspaceKey(buttonPress):
         if infoBox.compare("insert", "<=", "input_start"):
             return "break"
+    def allKeys(buttonPress):
+        if infoBox.compare("insert", "<", "input_start"):
+            return "break"
 
     # User can press Enter and create another command box.
     def enterKey(buttonPress):
@@ -33,21 +36,25 @@ def helpCommand(infoBox, tableStored, entryUpdate, closeTable, calcFunc2):
             if findCommand.lower() == "end":
                 entryPass[0] = False
                 infoBox.insert("end", "\nEntry stopped: Type other commands or Help.")
-
-            elif entry(tableStored, findCommand):
-                undoHistory.append(c.deepcopy(tableStored))
-                redoHistory.clear()
-                entryUpdate()
-                entryPass[0] = False
-                infoBox.insert("end", "\nEntry added.")
-                # Mark set and Mark Gravity
             else:
-                infoBox.insert("end", "\nIncorrect Entry.")
-                infoBox.insert("end", "\nPlease try again or type End to stop the command.")
-                infoBox.insert("end", "\n Add a row or column: ")
-                infoBox.mark_set("input_start", "end-1c")
-                infoBox.mark_gravity("input_start", "left")
-                return "break"
+                oldTable = c.deepcopy(tableStored)
+
+                if entry(tableStored, findCommand):
+                    undoHistory.append(oldTable)
+                    redoHistory.clear()
+                    entryUpdate()
+                    entryPass[0] = False
+                    infoBox.insert("end", "\nEntry added.")
+                # Mark set and Mark Gravity
+                # Sets where it starts and how it behaves
+                # input_start name of marker
+                else:
+                    infoBox.insert("end", "\nIncorrect Entry.")
+                    infoBox.insert("end", "\nPlease try again or type End to stop the command.")
+                    infoBox.insert("end", "\nAdd a row or column: ")
+                    infoBox.mark_set("input_start", "end-1c")
+                    infoBox.mark_gravity("input_start", "left")
+                    return "break"
         # This allows the usage of Undo in the command bar
         # Gives back their last entry
         elif findCommand.lower() == "undo":
@@ -130,6 +137,7 @@ def helpCommand(infoBox, tableStored, entryUpdate, closeTable, calcFunc2):
     infoBox.bind("<Return>", enterKey)
     infoBox.bind("<Tab>", tabKey)
     infoBox.bind("<BackSpace>", backspaceKey)
+    infoBox.bind("<Key>", allKeys)
 
 # Creates a new command box on a new line
 def newCommand(infoBox):#
