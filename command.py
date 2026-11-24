@@ -55,6 +55,11 @@ def helpCommand(infoBox, tableStored, entryUpdate, closeTable, calcFunc2):
                     infoBox.mark_set("input_start", "end-1c")
                     infoBox.mark_gravity("input_start", "left")
                     return "break"
+
+        # Closes the program back to main screen.
+        elif findCommand.lower() == "close":
+            closeTable()
+            return "break"
         # Allows the user to delete a Row with R
         # Saves the current table for undo
         # Makes sure the row can be deleted.
@@ -123,10 +128,6 @@ def helpCommand(infoBox, tableStored, entryUpdate, closeTable, calcFunc2):
             else:
                 infoBox.insert("end", "\n Nothing to Restore.")
         
-        # Closes the program back to main screen.
-        elif findCommand.lower() == "close":
-            closeTable()
-            return "break"
 
         # Commentary on what help does
         # When the user types help      

@@ -1,5 +1,8 @@
 import tkinter as kin
 from tkinter import ttk as t
+from tkinter import filedialog
+import csv
+
 import time
 import guidance
 
@@ -96,7 +99,7 @@ def tableView(tableStored, limiterRows, limiterColumns):
 
     # This holds buttons for the command screen
     infoSection = kin.Frame(tableDisplay)
-    infoSection.pack(anchor="w", padx=6, pady=6)
+    infoSection.pack(fill="both", expand=True , padx=6, pady=6)
 
     # Command Box to type in for commands
     infoBox = kin.Text(infoSection, bg="white", height=20, width=110)
@@ -119,6 +122,34 @@ def tableView(tableStored, limiterRows, limiterColumns):
 
     pageHold = kin.Frame(buttonHold)
     pageHold.pack(side="left", padx=5)
+
+    def exportCSV():
+        filePath = filedialog.asksaveasfilename(
+            defaultextension=".csv",
+            filetypes=[("CSV Files", "*.csv")]
+        )
+
+        if not filePath:
+            return
+
+        with open(filePath, "w", newline="", encoding="utf-8") as file:
+            writer = csv.writer(file)
+            writer.writerow(colHeaders)
+            writer.writerows(rowStarters)
+
+    def exportWindow():
+        exportDisplay = kin.Toplevel(tableDisplay)
+        exportDisplay.title("Export")
+        exportDisplay.geometry("400x300")
+
+        exportOptions = kin.StringVar()
+        exportOptions.set("Export Only Table as .csv")
+
+        exportMenu = kin.OptionMenu(exportDisplay, exportOptions, "Export Only Table as .csv", command=lambda selected: exportCSV())
+        exportMenu.pack(fill="x", padx=20, pady=15)
+
+    exportButton = kin.Button(infoSection, text="Export", command=exportWindow, font=("Courier New", 20))
+    exportButton.pack(side="bottom", anchor="e")
 
     # This sees if we have the CSV data.
     # Grabs data for rows and columns.
