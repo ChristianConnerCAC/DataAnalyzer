@@ -55,8 +55,49 @@ def helpCommand(infoBox, tableStored, entryUpdate, closeTable, calcFunc2):
                     infoBox.mark_set("input_start", "end-1c")
                     infoBox.mark_gravity("input_start", "left")
                     return "break"
+        # Allows the user to delete a Row with R
+        # Saves the current table for undo
+        # Makes sure the row can be deleted.
+        elif findCommand[0].upper() == "R":
+            oldTable = c.deepcopy(tableStored)
+
+            if deleteEntry(tableStored, findCommand):
+                undoHistory.append(oldTable)
+
+                # Clears redo for new changes made.
+                redoHistory.clear()
+                entryUpdate()
+
+                # Visually shows in command prompt
+                # A row was deleted
+                # Or there was an error and couldn't proceed.
+                infoBox.insert("end", "\nDeleted Row.")
+            else:
+                infoBox.insert("end", "\nIncorrect Information for Row.")
+
+        # Allows the user to delete a Row with C
+        # Saves the current table for undo
+        # Makes sure the column can be deleted.
+        elif findCommand[0].upper() == "C":
+            oldTable = c.deepcopy(tableStored)
+            if deleteEntry(tableStored, findCommand):
+                undoHistory.append(oldTable)
+
+                # Clears redo for new changes made.
+                redoHistory.clear()
+                entryUpdate()
+
+                # Visually shows in command prompt
+                # A column was deleted
+                # Or there was an error and couldn't proceed.
+                infoBox.insert("end", "\nDeleted Column.")
+            else:
+                infoBox.insert("end", "\nIncorrect Information for Column.")
+
+            
         # This allows the usage of Undo in the command bar
-        # Gives back their last entry
+        # Gives back their last entry.
+
         elif findCommand.lower() == "undo":
             if undoHistory:
                 # It will save the current so the user can redo it later if needed.
@@ -196,3 +237,40 @@ def entry(tableStored, findCommand):
                 # Cell is left empty if no value.
                 tableStored[fixedPlace].insert(columnPosition, "")
     return True
+
+def deleteEntry(tablesStored, findCommand):
+    if not findCommand:
+        return False
+    
+    if findCommand[0].upper() == "R":
+        if findCommand[1:].isdigit() == False:
+            return False
+
+        rowPosition = int(findCommand[1:])
+
+        if rowPosition < 1:
+            return False
+
+        if rowPosition >= len(tablesStored):
+            return False
+
+        tablesStored.pop(rowPosition)
+        return True
+
+    elif findCommand[0].upper() == "C":
+        if findCommand[1:].isdigit() == False:
+            return False
+
+        columnPosition = int(findCommand[1:]) - 1
+
+        if columnPosition < 0:
+            return False
+
+        if columnPosition >= len(tablesStored[0]):
+            return False
+
+        for eachRow in tablesStored:
+            eachRow.pop(columnPosition)
+
+        return True
+    return False

@@ -233,6 +233,14 @@ def tableView(tableStored, limiterRows, limiterColumns):
         pageCounter.config(text=f"Page {firPage + 1} of {maxPages}")
         refreshContents()
 
+    # Goes through pages by 1
+    def pageRight(keyEvent):
+        pageClicks(1)
+
+    # Goes back through pages by 1
+    def pageLeft(keyEvent):
+        pageClicks(-1)
+
     # Displays correct clicks on button
     # This moves through the sets and columns instead of pages.
     def setClicks(selected):
@@ -240,6 +248,22 @@ def tableView(tableStored, limiterRows, limiterColumns):
         firSet, firColumn, endColumn = TVnavi.setClicks(selected, firSet, limiterColumns, maxSets)
         setCounter.config(text=f"{firSet + 1} of {maxSets}")
         refreshContents()
+
+    # Goes through sets by 1
+    def setUp(keyEvent):
+        setClicks(1)
+
+    # Goes back through sets by 1
+    def setDown(keyEvent):
+        setClicks(-1)
+
+
+    # tkinter Keys bound to arrow right, left, up, and down.
+    tableColrow.bind("<Right>", pageRight)
+    tableColrow.bind("<Left>", pageLeft)
+    tableColrow.bind("<Up>", setUp)
+    tableColrow.bind("<Down>", setDown)
+    tableColrow.focus_set()
 
     # Search button to be able to search.
     searchButton = kin.Button(searchHold, text="Search", command=searchData, font=("Courier New", 12, "bold", "underline"), foreground="green")
