@@ -36,9 +36,63 @@ def tableView(tableStored, limiterRows, limiterColumns):
     # Tree headings displays both for treeview
     tableColrow = t.Treeview(tableWhole, show="tree headings", height=10)
     tableColrow.pack(anchor="nw")
-
+    
+    # Adds for Editing
+    # The row number column + width
     tableColrow.heading("#0", text="")
     tableColrow.column("#0", width=40, stretch=False)
+
+    # Allows for editing a cell by double click.
+    def cellEdit(editEvent):
+        # For finding the row and column
+        selectedRow = tableColrow.identify_row(editEvent.y)
+        selectedColumn = tableColrow.identify_column(editEvent.x)
+
+        # Return nothing if no row is selected
+        # Prevents editing frmo row number column.
+        if selectedRow == "":
+            return
+        if selectedColumn == "#0":
+            return
+
+        # Abides by the set and pages
+        # registering where the current set and page is for editing.
+
+        rowNumber = tableColrow.index(selectedRow) + (firPage * limiterRows)
+        columnNumber = int(selectedColumn.replace("#", "")) - 1 + firColumn
+        clickedValue = rowStarters[rowNumber][columnNumber]
+        cellPosition = tableColrow.bbox(selectedRow, selectedColumn)
+
+        # Accounting if the cell has no position.
+        if not cellPosition:
+            return
+
+        # Entry Box 
+        x,y, width, height = cellPosition
+
+        # Entry Box to the cell that is selected.
+        editBox = kin.Entry(tableColrow)
+        editBox.place(x=x, y=y, width=width, height=height)
+
+        # Inserts current cell value
+        editBox.insert(0, clickedValue)
+        # .focus allows to type.
+        editBox.focus()
+
+        # This allows to refresh the page.
+        # Keeping all contents that were edited.
+        # Updating the main table.
+        # Removing the editing box.
+        def saveEdit(editEvent):
+            newVal = editBox.get()
+            rowStarters[rowNumber][columnNumber] = newVal
+            editBox.destroy()
+            refreshContents()
+        editBox.bind("<Return>", saveEdit)
+        print (rowNumber, columnNumber)
+
+    # Double Click Bind from Tkinter.
+    tableColrow.bind("<Double-1>", cellEdit)
 
     # This holds buttons for the command screen
     infoSection = kin.Frame(tableDisplay)

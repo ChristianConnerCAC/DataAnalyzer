@@ -1,5 +1,5 @@
 import copy as c
-
+import communications
 # end always puts the line after in this case starts at the beginning.
 def helpCommand(infoBox, tableStored, entryUpdate, closeTable, calcFunc2):
     infoBox.insert("end", 'Type "Help" without the " into the command box to get started.\n')
@@ -110,6 +110,9 @@ def helpCommand(infoBox, tableStored, entryUpdate, closeTable, calcFunc2):
             infoBox.insert("end", "\n When you manually place in press Tab for each new piece of data")
             infoBox.insert("end", "\n Example: R1+ [Tab] 1 [Tab] 2 [Tab] 3 [Tab] 4 (Tab is your seperator.)")
 
+        elif findCommand.lower() == "calculate":
+            calculations = communications.communicationsOut(tableStored)
+            infoBox.insert("end", f"\nCalculations: {calculations}")
         # Commentary for entry
         elif findCommand.replace("Command Box: ", "").lower() == "entry":
             infoBox.insert("end", "\nAdd a row or column: ")
