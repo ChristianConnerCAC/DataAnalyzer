@@ -14,7 +14,7 @@ import search
 import TVnavi
 # Command Bar Rules
 import command
-
+import GV
 #Rearrange to look nicer later
 #Displays the second screen called "Table View"
 #Geometry matches with DA.py
@@ -158,8 +158,31 @@ def tableView(tableStored, limiterRows, limiterColumns):
         exportMenu = kin.OptionMenu(exportDisplay, exportOptions, "Export Only Table as .csv", command=lambda selected: exportCSV())
         exportMenu.pack(fill="x", padx=20, pady=15)
 
-    exportButton = kin.Button(infoSection, text="Export", command=exportWindow, font=("Courier New", 20))
-    exportButton.pack(side="bottom", anchor="e")
+    # For the pop up and selection for the graph
+    # Line Graph is to set everything up then ill work on the rest for variety.
+    def graphWindow():
+        graphDisplay = kin.Toplevel(tableDisplay)
+        graphDisplay.title("Graph")
+        graphDisplay.geometry("400x300")
+
+        graphOptions = kin.StringVar()
+        graphOptions.set("Select Graph Type")
+
+        def graphSelected(selected):
+            if selected == "Line Graph":
+                GV.graphView(tableDisplay, rowStarters, colHeaders)
+                graphDisplay.destroy()
+
+        graphMenu = kin.OptionMenu(graphDisplay, graphOptions, "Bar Graph", "Line Graph", "Pie Chart", command=graphSelected)
+        graphMenu.pack(fill="x", padx=20, pady=15)
+
+    # Graph Button that allows the user to choose a graph.
+    graphButton = kin.Button(infoSection, text="Graph", command=graphWindow, font=("Courier New", 20), width=10)
+    graphButton.pack(side="left", anchor="w")
+
+    # Allows the user to export into a CSV, etc..
+    exportButton = kin.Button(infoSection, text="Export", command=exportWindow, font=("Courier New", 20), width=10)
+    exportButton.pack(side="left", anchor="e")
 
     # This sees if we have the CSV data.
     # Grabs data for rows and columns.

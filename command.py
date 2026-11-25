@@ -63,7 +63,7 @@ def helpCommand(infoBox, tableStored, entryUpdate, closeTable, calcFunc2):
         # Allows the user to delete a Row with R
         # Saves the current table for undo
         # Makes sure the row can be deleted.
-        elif findCommand[0].upper() == "R":
+        elif findCommand[0].upper() == "R" and findCommand.lower() != "redo":
             oldTable = c.deepcopy(tableStored)
 
             if deleteEntry(tableStored, findCommand):
