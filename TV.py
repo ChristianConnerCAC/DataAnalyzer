@@ -2,7 +2,7 @@ import tkinter as kin
 from tkinter import ttk as t
 from tkinter import filedialog
 import csv
-
+import windowPosition
 import time
 import guidance
 
@@ -28,6 +28,13 @@ def tableView(tableStored, limiterRows, limiterColumns):
     csvDisplay = kin.Toplevel(tableDisplay)
     csvDisplay.title("CSV Table")
     csvDisplay.geometry("800x400")
+
+    # The location of the grids for CSV and in Table
+    positionGrid = windowPosition.createGrid(csvDisplay, csvDisplay)
+    positionGrid.pack(side="bottom", pady=5)
+
+    positionGrid = windowPosition.createGrid(tableDisplay, tableDisplay)
+    positionGrid.pack(side="bottom", anchor="e", padx=10, pady=5)
 
     # Holds the table in its own section.
     tableWhole = kin.Frame(csvDisplay)
@@ -123,6 +130,8 @@ def tableView(tableStored, limiterRows, limiterColumns):
     pageHold = kin.Frame(buttonHold)
     pageHold.pack(side="left", padx=5)
 
+    # Allows for the export as .csv for the new
+    # drop down as one of the selections
     def exportCSV():
         filePath = filedialog.asksaveasfilename(
             defaultextension=".csv",
@@ -137,6 +146,7 @@ def tableView(tableStored, limiterRows, limiterColumns):
             writer.writerow(colHeaders)
             writer.writerows(rowStarters)
 
+    # Displays the pop up window for the export options.
     def exportWindow():
         exportDisplay = kin.Toplevel(tableDisplay)
         exportDisplay.title("Export")

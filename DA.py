@@ -3,6 +3,7 @@ from tkinter import filedialog as fd
 import csv
 import TV
 import guidance
+import windowPosition
 
 limiterRows = 10
 limiterColumns = 10
@@ -78,6 +79,9 @@ insideNotif = kin.Label(
     justify = "center"
 )
 insideNotif.pack(side="left", padx=5, expand=True)
+
+positionGrid = windowPosition.createGrid(mainDisplay, mainDisplay)
+positionGrid.place(relx=0.5, rely=0.45, anchor="center")
 
 # The right side bracket decoration to hold the message
 rightBrkt = kin.Label(notifMessage, text="]", font=("Courier New", 50))
