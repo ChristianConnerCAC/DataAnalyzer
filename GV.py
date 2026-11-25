@@ -13,8 +13,10 @@ def graphView(display, rowStarters, colHeaders):
 
     # Creates the Row Section
     rowSection = kin.Frame(graphDisplay)
-    rowSection.pack(side="bottom", anchor="w", padx=20, pady=5)
+    rowSection.pack(side="top", anchor="center", pady=5)
 
+    rowLines = kin.Frame(rowSection)
+    rowLines.pack(side="top")
     # Section for setting the X values
     xAxisSection = kin.Frame(graphDisplay)
     xAxisSection.pack(side="bottom", anchor="w", padx=20, pady=5)
@@ -97,10 +99,18 @@ def graphView(display, rowStarters, colHeaders):
         except ValueError:
             return
 
-
+    #First row section and position in the first column.
+    firstRow = kin.Frame(rowLines)
+    firstRow.grid(row=0, column=0, padx=10,pady=3, sticky="W")
+     
     # Creates the row selection labels.
-    rowLabel = kin.Label(rowSection, text="Row: ", font=("Courier New", 14))
-    rowLabel.pack(side="left")
+    rowLabel = kin.Entry(firstRow, width=12, font=("Courier New", 14))
+    rowLabel.insert(0, "Line 1:")
+    rowLabel.pack(side="left", padx=5)
+
+    def saveName(selected):
+        rowLabel.master.focus_set()
+    rowLabel.bind("<Return>", saveName)
 
     # Draws the selected row as a line graph.
     # Removes the previous graph line
@@ -108,29 +118,34 @@ def graphView(display, rowStarters, colHeaders):
     def updateGraph():
         graphCanvas.delete("graphLine")
 
-        selectedRow = rowOptions.get()
+        for rowIndex in range(len(rowSelections)):
+            selectedRow = rowSelections[rowIndex].get()
 
-        if selectedRow == "Select Row":
-            return
+            if selectedRow == "Select Row":
+                continue
 
-        rowValues = rowStarters[int(selectedRow) - 1]
-        points = []
+            rowValues = rowStarters[int(selectedRow) - 1]
+            points = []
 
-        # Calculates the canvas position for each row value.
-        for x in range(len(rowValues)):
-            xPosition = 100 + (750 / (len(rowValues) - 1)) * x
-            yPosition = 450 - (int(rowValues[x]) * 400/ 1000)
+            # Calculates the canvas position for each row value.
+            for x in range(len(rowValues)):
+                xPosition = 100 + (750 / (len(rowValues) - 1)) * x
+                yPosition = 450 - (int(rowValues[x]) * 400/ 1000)
 
-            points.append((xPosition, yPosition))
+                points.append((xPosition, yPosition))
 
-        for x in range(len(points) - 1):
-            graphCanvas.create_line(points[x][0], points[x][1], points[x + 1][0], points[x + 1][1], fill="blue", width=2, tags="graphLine")
-    
+            for x in range(len(points) - 1):
+                graphCanvas.create_line(points[x][0], points[x][1], points[x + 1][0], points[x + 1][1], fill="blue", width=2, tags="graphLine")
+
+    rowSelections = []
+
     # Creates the dropdown menu for selecting a row.
     rowOptions = kin.StringVar()
     rowOptions.set("Select Row")
 
-    rowMenu = kin.OptionMenu(rowSection, rowOptions, *range(1, len(rowStarters) +1), command=lambda selected: updateGraph())
+    rowSelections.append(rowOptions)
+
+    rowMenu = kin.OptionMenu(firstRow, rowOptions, *range(1, len(rowStarters) +1), command=lambda selected: updateGraph())
     rowMenu.pack(side="left", padx=5)
 
     # Keep track of a limited amount of rows to be added
@@ -143,7 +158,21 @@ def graphView(display, rowStarters, colHeaders):
             newRow = kin.StringVar()
             newRow.set("Select Row")
 
-            newMenu = kin.OptionMenu(rowSection, newRow, *range(1, len(rowStarters) + 1))
+            rowSelections.append(newRow)
+
+            column = (rowCount[0]) // 5
+            row = (rowCount[0]) % 5
+
+            newLine = kin.Frame(rowLines)
+            newLine.grid(row=row, column=column, padx=10, pady=3, sticky="w")
+
+            newLabel = kin.Entry(newLine, width=12, font=("Courier New", 14))
+            newLabel.insert(0, "Line " + str(rowCount[0] + 1) + ":")
+            newLabel.pack(side="left", padx=5)
+
+            newLabel.bind("<Return>", lambda selected: newLine.focus_set())
+
+            newMenu = kin.OptionMenu(newLine, newRow, *range(1, len(rowStarters) + 1), command=lambda selected: updateGraph())
             newMenu.pack(side="left",padx=5)
 
             rowCount[0] = rowCount[0] + 1
